@@ -131,12 +131,12 @@ def main_with_logger():
                 for attr in tei.get("attributes", [])
             }
 
-            print("TEI UID:", tei_uid)
-            print("Org Unit:", org_unit)
+            print("Source TEI UID:", tei_uid)
+            print("Source Org Unit:", org_unit)
             #print("Legal Name:", attributes_dict.get("Legal Name"))
-            print("UIN Code: ", attributes_dict.get(SEARCH_TEI_ATTRIBUTE_UID))
-            print("Region: ", attributes_dict.get(REGION_NAME_ATTRIBUTE_UID))
-            print("Legal Name: ", attributes_dict.get(LEGAL_NAME_ATTRIBUTE_UID))
+            #print("Source UIN Code: ", attributes_dict.get(SEARCH_TEI_ATTRIBUTE_UID))
+            #print("Source Region: ", attributes_dict.get(REGION_NAME_ATTRIBUTE_UID))
+            #print("Source Legal Name: ", attributes_dict.get(LEGAL_NAME_ATTRIBUTE_UID))
             
             #if not attributes_dict.get(UIN_SYNC_BPR_DHIS2_ATTRIBUTE_UID) and attributes_dict.get(LEGAL_NAME_ATTRIBUTE_UID) and attributes_dict.get(SEARCH_TEI_ATTRIBUTE_UID):
             if (
@@ -144,12 +144,15 @@ def main_with_logger():
                 attributes_dict.get(LEGAL_NAME_ATTRIBUTE_UID) and 
                 attributes_dict.get(SEARCH_TEI_ATTRIBUTE_UID)
             ):
-                print("UIN Code :", attributes_dict.get(SEARCH_TEI_ATTRIBUTE_UID))
-                print("Region:", attributes_dict.get(REGION_NAME_ATTRIBUTE_UID))
-                print("Legal Name:", attributes_dict.get(LEGAL_NAME_ATTRIBUTE_UID))
+                
                 uin_code = attributes_dict.get(SEARCH_TEI_ATTRIBUTE_UID)
                 region_code = attributes_dict.get(REGION_NAME_ATTRIBUTE_UID)
                 legal_name = attributes_dict.get(LEGAL_NAME_ATTRIBUTE_UID)
+
+                print("Source UIN Code :", uin_code)
+                print("Source Region:", region_code)
+                print("Source Legal Name:", legal_name)
+
                 '''
                 orgunit_parent = orgunit_list_map.get(region_code)
                 print("orgunit_parent:", orgunit_parent)
@@ -165,13 +168,14 @@ def main_with_logger():
                 parent_org_uid, orguit_uid, orguit_attribute_value = get_org_and_child_attribute_value(orgunit_list_map, region_code, ORG_UNIT_META_ATTRIBUTE)
                 #orguit_attribute_value = None
                 if parent_org_uid:
-                    print(f"Parent Org UID:, {parent_org_uid}, orguit_uid Org UID:, {orguit_uid}.  OrgUnit orguit_attribute_value:, {orguit_attribute_value}")
+                    print(f"Parent Org UID:, {parent_org_uid}, orguit_uid Org UID:, {orguit_uid}.  Previous OrgUnit orguit_attribute_value:, {orguit_attribute_value}")
                     #if orguit_attribute_value != uin_code:
                     #if orguit_attribute_value and orguit_attribute_value != uin_code:
                     #if not orguit_attribute_value:
-                    if orguit_attribute_value is not None and orguit_attribute_value != uin_code:
+                    #if orguit_attribute_value is not None and orguit_attribute_value != uin_code:
+                    if orguit_attribute_value != uin_code:
                         #print("new orgunit created")
-                        print(f"OrgUnit orguit_attribute_value inside new: , {orguit_attribute_value}")
+                        print(f"Previous OrgUnit orguit_attribute_value inside new: , {orguit_attribute_value} UIN Code, {uin_code}")
                         orgUnit_post_payload = {
                             "name": legal_name,
                             "shortName": legal_name,
@@ -193,6 +197,8 @@ def main_with_logger():
                             }]
                             
                             orgunit_response_data["attributeValues"] = attributeValues
+                            orgunit_response_data["name"] = legal_name
+                            orgunit_response_data["shortName"] = legal_name
                             
                             update_orgunit_in_dhis2(orgunit_post_url, session_post, orgunit_response_data, orguit_uid, region_code, legal_name, uin_code, tei, tei_get_url, session_get, UIN_SYNC_BPR_DHIS2_ATTRIBUTE_UID )
                             

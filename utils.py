@@ -242,11 +242,10 @@ def push_orgunit_in_dhis2(orgunit_post_url, session_post, orgUnit_post_payload, 
         response = session_post.post(orgunit_post_url, data=json.dumps(orgUnit_post_payload), headers={"Content-Type": "application/json"})
         response.raise_for_status()
         
-        update_tei_attributeValue_in_dhis2( attribute_id, tei, tei_get_url, session_get )
-
-
         print(f"Orgunit created successfully for Region : {region_code}, orgunit_name : {legal_name}, uin_code : {uin_code}")
         logging.info(f"Orgunit created successfully for Region : {region_code}, orgunit_name : {legal_name}, uin_code : {uin_code}")
+        
+        update_tei_attributeValue_in_dhis2( attribute_id, tei, tei_get_url, session_get )
     except requests.RequestException as e:
         resp_msg=response.text
         ind=resp_msg.find('conflict')
@@ -262,10 +261,9 @@ def update_orgunit_in_dhis2(orgunit_post_url, session_post, orgUnit_post_payload
         response = session_post.put(orgunit_update_url, data=json.dumps(orgUnit_post_payload), headers={"Content-Type": "application/json"})
         response.raise_for_status()
         
-        update_tei_attributeValue_in_dhis2( attribute_id, tei, tei_get_url, session_get )
-
         print(f"Orgunit updated successfully for Region : {region_code}, orgunit_name : {legal_name}, orguit_uid : {orguit_uid}, uin_code : {uin_code}")
         logging.info(f"Orgunit updated successfully for Region : {region_code}, orgunit_name : {legal_name}, orguit_uid : {orguit_uid}, uin_code : {uin_code}")
+        update_tei_attributeValue_in_dhis2( attribute_id, tei, tei_get_url, session_get )
     except requests.RequestException as e:
         resp_msg=response.text
         ind=resp_msg.find('conflict')
